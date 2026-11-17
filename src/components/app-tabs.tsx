@@ -1,32 +1,30 @@
-import { NativeTabs } from 'expo-router/native-tabs';
-import { useColorScheme } from 'react-native';
+import { TabList, TabSlot, TabTrigger, Tabs } from 'expo-router/ui';
 
-import { Colors } from '@/constants/theme';
+import { BottomNav, NavItem } from './bottom-nav';
 
 export default function AppTabs() {
-  const scheme = useColorScheme();
-  const colors = Colors[scheme === 'dark' ? 'dark' : 'light'];
-
   return (
-    <NativeTabs
-      backgroundColor={colors.background}
-      indicatorColor={colors.backgroundElement}
-      labelStyle={{ selected: { color: colors.text } }}>
-      <NativeTabs.Trigger name="index">
-        <NativeTabs.Trigger.Label>Home</NativeTabs.Trigger.Label>
-        <NativeTabs.Trigger.Icon
-          src={require('@/assets/images/tabIcons/home.png')}
-          renderingMode="template"
-        />
-      </NativeTabs.Trigger>
-
-      <NativeTabs.Trigger name="explore">
-        <NativeTabs.Trigger.Label>Explore</NativeTabs.Trigger.Label>
-        <NativeTabs.Trigger.Icon
-          src={require('@/assets/images/tabIcons/explore.png')}
-          renderingMode="template"
-        />
-      </NativeTabs.Trigger>
-    </NativeTabs>
+    <Tabs>
+      <TabSlot />
+      <TabList asChild>
+        <BottomNav>
+          <TabTrigger name="home" href="/" asChild>
+            <NavItem ios="house" android="home" label="Home" />
+          </TabTrigger>
+          <TabTrigger name="requests" href="/requests" asChild>
+            <NavItem ios="list.bullet.rectangle" android="list_alt" label="Request" />
+          </TabTrigger>
+          <TabTrigger name="new" href="/new" asChild>
+            <NavItem ios="plus" android="add" label="New" />
+          </TabTrigger>
+          <TabTrigger name="rewards" href="/rewards" asChild>
+            <NavItem ios="gift" android="redeem" label="Reward" />
+          </TabTrigger>
+          <TabTrigger name="profile" href="/profile" asChild>
+            <NavItem ios="person" android="person" label="Profile" />
+          </TabTrigger>
+        </BottomNav>
+      </TabList>
+    </Tabs>
   );
 }
