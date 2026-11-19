@@ -1,7 +1,7 @@
 import { Image } from 'expo-image';
 import { StatusBar } from 'expo-status-bar';
 import { SymbolView } from 'expo-symbols';
-import { Pressable, ScrollView, StyleSheet, Text, View, type ColorValue } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View, useWindowDimensions, type ColorValue } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { BottomNavHeight } from '@/components/bottom-nav';
@@ -31,6 +31,7 @@ const PHOTOS = {
   software: require('@/assets/images/services/software.jpg'),
   mascot: require('@/assets/images/services/mascot.png'),
   star: require('@/assets/images/services/star.png'),
+  headerBackground: require('@/assets/images/header-background.png'),
 } as const;
 
 const SERVICES = [
@@ -99,6 +100,9 @@ function AllServicesCard() {
 
 export default function HomeScreen() {
   const insets = useSafeAreaInsets();
+  const { width: windowWidth } = useWindowDimensions();
+  // Keep the source image at its native 3:2 aspect ratio across screen sizes.
+  const headerBackgroundHeight = windowWidth * (2 / 3);
 
   return (
     <View style={styles.root}>
@@ -113,6 +117,21 @@ export default function HomeScreen() {
             paddingBottom: Math.max(insets.bottom, 12) + BottomNavHeight + 28,
           },
         ]}>
+        {/* Decorative header art: full-bleed behind the status, location and search rows.
+            The supplied PNG fades to transparency at its lower edge, so the promo card
+            and the rest of the screen remain visually unchanged. */}
+        <Image
+          source={PHOTOS.headerBackground}
+          style={[
+            styles.headerBackground,
+            { top: 0, height: headerBackgroundHeight },
+          ]}
+          contentFit="fill"
+          pointerEvents="none"
+          accessibilityElementsHidden
+          importantForAccessibility="no"
+        />
+
         <View style={styles.topRow}>
           <Pressable style={({ pressed }) => [styles.location, pressed && styles.pressed]} accessibilityRole="button">
             <Icon ios="mappin.and.ellipse" android="location_on" size={18} color={C.text} />
@@ -296,6 +315,13 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingHorizontal: 20,
+  },
+  headerBackground: {
+    position: 'absolute',
+    left: -20,
+    right: -20,
+    // It sits behind the first two rows and fades out over the transition to the promo.
+    zIndex: 0,
   },
   pressed: {
     opacity: 0.75,
